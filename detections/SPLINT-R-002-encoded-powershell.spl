@@ -1,0 +1,13 @@
+# SPLINT-R-002 | Encoded PowerShell (v2, test-validated on DC01)
+# This is the reviewed SPL shown in the lab search UI on 2026-11-01.
+# Schedule outside this SPL: */5 * * * *, search window -5m to now.
+# Host/sourcetype names may need to be adjusted in another installation.
+index=main host=DC01 sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
+| rex field=_raw "<EventID>(?<sysmon_event_id>\d+)</EventID>"
+| where sysmon_event_id="1"
+| rex field=_raw "<Data Name='Image'>(?<Image>[^<]*)</Data>"
+| rex field=_raw "<Data Name='ParentImage'>(?<ParentImage>[^<]*)</Data>"
+| rex field=_raw "<Data Name='CommandLine'>(?<CommandLine>[^<]*)</Data>"
+| where (like(lower(Image), "%powershell.exe") OR like(lower(Image), "%pwsh.exe")) AND NOT like(lower(Image), "%splunk-powershell.exe")
+| where like(lower(CommandLine), "%-encodedcommand%") OR like(lower(CommandLine), "% -enc %") OR like(lower(CommandLine), "% -e %")
+| table _time Image ParentImage CommandLine

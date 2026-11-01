@@ -1,0 +1,10 @@
+index=main EventCode=4625 earliest=-5m@m latest=now
+| eval target_account=coalesce(TargetUserName, Target_Account_Name, user)
+| eval source_address=coalesce(IpAddress, Source_Network_Address, src, "unknown")
+| where isnotnull(target_account)
+| sort 0 _time
+| streamstats time_window=3m count as failures_in_3m by host target_account source_address
+| where failures_in_3m >= 5
+| stats max(failures_in_3m) as peak_failures min(_time) as first_detected max(_time) as last_detected by host target_account source_address
+| convert ctime(first_detected) ctime(last_detected)
+| sort - peak_failures

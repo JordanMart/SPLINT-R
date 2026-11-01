@@ -1,0 +1,12 @@
+# SANITIZED EXAMPLE ONLY. Adapt to your environment; not an export of live inputs.conf.
+# Put Windows event inputs on the WINDOWS Universal Forwarder, not the Ubuntu indexer.
+# Verify the channel's 'Full Name' in Windows Event Viewer.
+
+[WinEventLog://Security]
+disabled = 0
+index = main
+
+# ENABLE ONLY AFTER SYSMON HAS BEEN INSTALLED AND VERIFIED LOCALLY.
+[WinEventLog://Microsoft-Windows-Sysmon/Operational]
+disabled = 0
+index = main

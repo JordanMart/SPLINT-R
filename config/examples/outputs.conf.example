@@ -1,0 +1,7 @@
+# SANITIZED EXAMPLE ONLY. Place in Windows Universal Forwarder's local config.
+# Private lab RFC1918 address; replace as needed.
+[tcpout]
+defaultGroup = lab_splunk
+
+[tcpout:lab_splunk]
+server = 192.168.50.10:9997
